@@ -2,35 +2,29 @@ package sk.brecka.modbus.master.simulator;
 
 import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.facade.ModbusSerialMaster;
+import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster;
 import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
 import com.ghgande.j2mod.modbus.util.SerialParameters;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SimulatorRTU {
+public class SimulatorTCP {
 
-  private final ModbusSerialMaster master;
+  private final ModbusTCPMaster master;
   private final SimpleRegister temperatureRegister;
   private final Timer timer;
 
-  public SimulatorRTU(String portName) {
+  public SimulatorTCP() {
     // Set up serial parameters for Modbus RTU
-    SerialParameters params = new SerialParameters();
-    params.setPortName(portName);
-    params.setBaudRate(9600);
-    params.setDatabits(8);
-    params.setParity("None");
-    params.setStopbits(1);
-    params.setEncoding(Modbus.SERIAL_ENCODING_RTU);
-    params.setEcho(false);
+    String host = "localhost";
+    int port = 5020;
 
     // Create the master instance
-    master = new ModbusSerialMaster(params);
+    master = new ModbusTCPMaster(host, port);
 
     // Initialize a register with a random temperature value
     temperatureRegister = new SimpleRegister(0);
-    updateTemperatureValue();
 
     // Set up a timer to update the temperature value every 5 seconds
     timer = new Timer();
@@ -41,7 +35,7 @@ public class SimulatorRTU {
             updateTemperatureValue();
           }
         },
-        0,
+        5000,
         5000);
   }
 
@@ -52,6 +46,14 @@ public class SimulatorRTU {
     int registerValue = Float.floatToIntBits(temperatureAdjustment);
     temperatureRegister.setValue(registerValue);
     System.out.println("Temperature adjusted by " + temperatureAdjustment);
+
+    try {
+      // Assuming the register address you want to write to is 0
+      int registerAddress = 0;
+      master.writeSingleRegister(registerAddress, temperatureRegister);
+    } catch (Exception e) {
+      System.out.println("Error writing to Modbus slave: " + e.getMessage());
+    }
   }
 
   public void start() throws Exception {
@@ -66,7 +68,7 @@ public class SimulatorRTU {
   }
 
   public static void main(String[] args) throws Exception {
-    SimulatorRTU simulator = new SimulatorRTU("tty.JBLGO"); // Replace with your COM port
+    SimulatorTCP simulator = new SimulatorTCP(); // Replace with your COM port
     simulator.start();
 
     // Add shutdown hook to stop the simulator on exit

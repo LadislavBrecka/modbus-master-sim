@@ -1,4 +1,4 @@
-package sk.brecka.modbus.simulator;
+package sk.brecka.modbus.master.simulator;
 
 import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.facade.ModbusSerialMaster;
@@ -8,13 +8,13 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MasterSimulator {
+public class SimulatorRTU {
 
   private final ModbusSerialMaster master;
   private final SimpleRegister temperatureRegister;
   private final Timer timer;
 
-  public MasterSimulator(String portName) {
+  public SimulatorRTU(String portName) {
     // Set up serial parameters for Modbus RTU
     SerialParameters params = new SerialParameters();
     params.setPortName(portName);
@@ -66,7 +66,7 @@ public class MasterSimulator {
   }
 
   public static void main(String[] args) throws Exception {
-    MasterSimulator simulator = new MasterSimulator("tty.JBLGO"); // Replace with your COM port
+    SimulatorRTU simulator = new SimulatorRTU("tty.JBLGO"); // Replace with your COM port
     simulator.start();
 
     // Add shutdown hook to stop the simulator on exit

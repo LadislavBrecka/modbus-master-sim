@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.sportradar.odds'
+group = 'sk.brecka.modbus.simulator'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.ghgande:j2mod:3.2.1'
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
