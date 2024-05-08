@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'sk.brecka.modbus.simulator'
+group = 'sk.brecka.archive.modbus.simulator'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -19,6 +19,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.23.1'
+
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.hibernate:hibernate-core:5.4.10.Final'
 }
 
 test {

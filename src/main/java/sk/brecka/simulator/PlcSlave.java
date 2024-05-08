@@ -1,4 +1,4 @@
-package sk.brecka.modbus.pcmaster;
+package sk.brecka.simulator;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.procimg.Register;
@@ -96,29 +96,32 @@ public class PlcSlave {
     return registers;
   }
 
-  public void startListening() throws ModbusException {
-    // Start the slave listener on the port
-    slave.open();
-    log.info(
-        "Slave device successfully started listening on port {} for {} registers",
-        listeningPort,
-        registerCount);
+  public void startListening() {
+    try {
+      slave.open();
+      log.info(
+          "Slave device successfully started listening on port {} for {} registers",
+          listeningPort,
+          registerCount);
+    } catch (ModbusException e) {
+      log.error("Slave device had a problem while starting the listener. Exiting application.", e);
+      System.exit(-1);
+    }
   }
 
   public void stopListening() {
-    // Stop the Modbus slave listener and timer
     slave.close();
     timer.cancel();
     log.info("Slave device stopped listening.");
   }
 
-  public static void main(String[] args) throws ModbusException {
-    PlcSlave plcSlave = new PlcSlave(5020, 5);
+    public static void main(String[] args) throws ModbusException {
+      PlcSlave plcSlave = new PlcSlave(5020, 5);
 
-    // Start the slave listening on the port
-    plcSlave.startListening();
+      // Start the slave listening on the port
+      plcSlave.startListening();
 
-    // Add shutdown hook to stop the simulator on exit
-    Runtime.getRuntime().addShutdownHook(new Thread(plcSlave::stopListening));
-  }
+      // Add shutdown hook to stop the simulator on exit
+      Runtime.getRuntime().addShutdownHook(new Thread(plcSlave::stopListening));
+    }
 }

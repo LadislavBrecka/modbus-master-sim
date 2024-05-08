@@ -1,4 +1,4 @@
-package sk.brecka.modbus.plcmaster;
+package sk.brecka.archive.modbus;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.procimg.ProcessImage;
@@ -11,6 +11,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * @deprecated
+ */
+@Deprecated(since = "1.0.0", forRemoval = true)
 @Log4j2
 public class PcSlave {
 
@@ -80,29 +84,22 @@ public class PcSlave {
     return stringBuilder.toString();
   }
 
-  public void startListening() throws ModbusException {
-    // Start the slave listener on the port
-    slave.open();
-    log.info(
-        "Slave device successfully started listening on port {} for {} registers",
-        listeningPort,
-        registerCount);
+  public void startListening() {
+    try {
+      slave.open();
+      log.info(
+          "Slave device successfully started listening on port {} for {} registers",
+          listeningPort,
+          registerCount);
+    } catch (ModbusException e) {
+      log.error("Slave device had a problem while starting the listener. Exiting application.", e);
+      System.exit(-1);
+    }
   }
 
   public void stopListening() {
-    // Stop the Modbus slave listener and timer
     slave.close();
     timer.cancel();
     log.info("Slave device stopped listening.");
-  }
-
-  public static void main(String[] args) throws ModbusException {
-    PcSlave pcSlave = new PcSlave(5020, 5);
-
-    // Start the slave listening on the port
-    pcSlave.startListening();
-
-    // Add shutdown hook to stop the simulator on exit
-    Runtime.getRuntime().addShutdownHook(new Thread(pcSlave::stopListening));
   }
 }

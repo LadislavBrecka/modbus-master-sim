@@ -1,4 +1,4 @@
-package sk.brecka.modbus.plcmaster;
+package sk.brecka.simulator;
 
 import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster;
 import com.ghgande.j2mod.modbus.procimg.Register;
@@ -8,6 +8,10 @@ import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * @deprecated
+ */
+@Deprecated(since = "1.0.0", forRemoval = true)
 @Log4j2
 public class PlcMaster {
 
@@ -81,13 +85,17 @@ public class PlcMaster {
   }
 
   public void start() throws Exception {
-    // Start the Modbus master
-    master.connect();
-    log.info("Master device successfully connected to TCP address {}:{}", host, port);
+    try {
+      master.connect();
+      log.info("Master device successfully connected to TCP address {}:{}", host, port);
+    } catch (Exception e) {
+      log.error(
+          "Master device had a problem while connecting to the slave. Exiting application.", e);
+      System.exit(-1);
+    }
   }
 
   public void stop() {
-    // Stop the Modbus master and timer
     master.disconnect();
     timer.cancel();
     log.info("Master device successfully disconnected.");
